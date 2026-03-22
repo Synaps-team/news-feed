@@ -40,7 +40,7 @@
     "name": "Microsoft AI Blog",
     "type": "rss",
     "url": "https://blogs.microsoft.com/ai/feed/",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.93,
     "categories": ["AI"]
   },
@@ -67,7 +67,7 @@
     "name": "Autodesk Blog",
     "type": "rss",
     "url": "https://www.autodesk.com/blogs/feed/",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.9,
     "categories": ["Digital Architecture Tools", "AI in Architecture"]
   },
@@ -76,7 +76,7 @@
     "name": "TechCrunch AI",
     "type": "rss",
     "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.85,
     "categories": ["AI"]
   },
@@ -85,7 +85,7 @@
     "name": "VentureBeat AI",
     "type": "rss",
     "url": "https://venturebeat.com/category/ai/feed/",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.84,
     "categories": ["AI"]
   },
@@ -94,7 +94,7 @@
     "name": "The Verge AI",
     "type": "rss",
     "url": "https://www.theverge.com/artificial-intelligence/rss/index.xml",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.82,
     "categories": ["AI"]
   },
