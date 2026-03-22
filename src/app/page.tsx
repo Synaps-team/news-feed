@@ -6,5 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const data = await getDashboardData();
-  return <NewsDashboard data={data} />;
+  const allowManualRefresh = process.env.ENABLE_SERVER_INGEST === "true";
+
+  return <NewsDashboard data={data} allowManualRefresh={allowManualRefresh} />;
 }

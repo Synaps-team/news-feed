@@ -11,9 +11,9 @@ The app ingests multiple source types, normalizes them into one format, classifi
 ## Stack
 
 - Frontend: Next.js App Router
-- Backend: Next.js route handlers
-- Database: SQLite locally, Supabase/Postgres on Vercel
-- Scheduling: local cron or Vercel cron
+- Backend: local ingestion worker + read-only Next.js frontend
+- Database: SQLite locally, Supabase/Postgres for shared production data
+- Scheduling: local cron
 - Optional AI enrichment: OpenAI
 
 ## Features
@@ -23,7 +23,7 @@ The app ingests multiple source types, normalizes them into one format, classifi
 - Deduplication and canonical item tracking
 - Ranking based on recency, relevance, source quality, and engagement
 - Real RSS ingestion by default, with optional seed data for offline testing
-- Refresh button and cron-ready ingestion endpoint
+- Read-only Vercel frontend backed by Supabase
 
 ## Project Structure
 
@@ -90,16 +90,13 @@ npm run dev
 
 4. Open [http://localhost:3000](http://localhost:3000)
 
-On first load, the app will attempt a live ingest from the enabled RSS sources automatically.
-
 ## Local Development Workflow
 
 - `npm run seed`: reset the SQLite DB and load sample items
 - `npm run ingest`: fetch configured live sources and persist results
 - `npm run dev`: run the app locally
-- Use the `Refresh` button in the UI to trigger a new ingest job
 
-By default the app writes to `data/latest-news.db`. If the database is empty, the app tries a live ingest from the enabled sources. Use `npm run seed` only if you want mock data for offline UI testing.
+By default the app writes to `data/latest-news.db`. Use `npm run seed` only if you want mock data for offline UI testing.
 
 ## Database Modes
 
@@ -117,14 +114,20 @@ DATABASE_PROVIDER=sqlite
 DATABASE_PATH=./data/latest-news.db
 ```
 
-### Vercel + Supabase
+### Shared production database
 
 Use:
 
 ```env
 DATABASE_PROVIDER=postgres
 POSTGRES_URL=postgresql://...
+ENABLE_SERVER_INGEST=false
 ```
+
+Use this mode for:
+
+- the Vercel frontend, which reads from Supabase
+- your local ingestion worker, which writes processed news into Supabase
 
 You can get the `POSTGRES_URL` value from your Supabase project connection settings. Use the pooled connection string for Vercel.
 
@@ -135,11 +138,12 @@ See `.env.example`.
 - `DATABASE_PATH`: SQLite database file path
 - `DATABASE_PROVIDER`: `sqlite` or `postgres`
 - `POSTGRES_URL`: Supabase/Postgres connection string for production
+- `ENABLE_SERVER_INGEST`: keep `false` for Vercel in the local-worker architecture
 - `OPENAI_API_KEY`: optional summary/classification enrichment
 - `OPENAI_MODEL`: optional AI model override
 - `NEWS_API_KEY`: optional News API adapter
 - `X_BEARER_TOKEN`: optional X official API adapter
-- `CRON_SECRET`: optional shared secret for `/api/cron/ingest`
+- `CRON_SECRET`: only needed if you explicitly re-enable server-side ingest routes
 
 ## Source Configuration
 
@@ -190,20 +194,6 @@ Run once a day at 6pm CET:
 0 17 * * * cd /absolute/path/to/Latest_news && npm run ingest
 ```
 
-### Vercel cron
-
-`vercel.json` includes a sample schedule for once a day at `17:00 UTC`, which is `18:00 CET`, hitting:
-
-```text
-/api/cron/ingest
-```
-
-If `CRON_SECRET` is set, send it as:
-
-```text
-Authorization: Bearer <secret>
-```
-
 ## Deploy To Vercel
 
 1. Push the project to GitHub.
@@ -213,19 +203,44 @@ Authorization: Bearer <secret>
 
 - `DATABASE_PROVIDER=postgres`
 - `POSTGRES_URL=<your supabase pooled connection string>`
-- `OPENAI_API_KEY`
-- `NEWS_API_KEY`
-- `X_BEARER_TOKEN`
-- `CRON_SECRET`
-- optionally `OPENAI_MODEL`
+- `ENABLE_SERVER_INGEST=false`
 
 5. Deploy.
 
 After deployment:
 
 - the app will use Supabase/Postgres instead of the local SQLite file
-- `/api/cron/ingest` will be called automatically by Vercel cron
-- the `Refresh` button will trigger a live ingest against the production database
+- the Vercel frontend will only read existing news from Supabase
+- ingestion stays outside Vercel and should be run locally or on another worker machine
+
+## Local Ingestion Worker
+
+To ingest locally and write into Supabase:
+
+1. Set local env vars to use the shared Postgres database:
+
+```env
+DATABASE_PROVIDER=postgres
+POSTGRES_URL=postgresql://...
+ENABLE_SERVER_INGEST=false
+OPENAI_API_KEY=...
+NEWS_API_KEY=...
+X_BEARER_TOKEN=...
+```
+
+2. Run the ingestion worker:
+
+```bash
+npm run ingest
+```
+
+3. Schedule it on your machine with cron if desired.
+
+In this architecture:
+
+- local worker fetches, classifies, summarizes, deduplicates, ranks, and writes to Supabase
+- Vercel frontend reads already-processed rows from Supabase
+- no heavy ingestion runs inside Vercel requests
 
 ## Notes
 

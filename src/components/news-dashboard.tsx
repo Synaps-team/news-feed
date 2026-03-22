@@ -19,7 +19,13 @@ function formatUpdatedAt(value: string | null) {
   }).format(new Date(value));
 }
 
-export function NewsDashboard({ data }: { data: DashboardData }) {
+export function NewsDashboard({
+  data,
+  allowManualRefresh,
+}: {
+  data: DashboardData;
+  allowManualRefresh: boolean;
+}) {
   const [activeCategory, setActiveCategory] = useState<DashboardTab>("All");
 
   const allItems = useMemo(() => {
@@ -114,7 +120,7 @@ export function NewsDashboard({ data }: { data: DashboardData }) {
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-fuchsia-200 bg-fuchsia-50/60 p-8 text-sm text-zinc-500">
-              No items yet. Use the refresh button below, or wait for the scheduled ingestion run to populate the feed.
+              No items yet. Run the local ingestion worker, then reload this page to see the latest synced results.
             </div>
           )}
         </section>
@@ -133,8 +139,11 @@ export function NewsDashboard({ data }: { data: DashboardData }) {
             </div>
           </div>
           <div className="flex flex-col gap-3 sm:items-end">
-            <div className="text-sm text-zinc-500">Last updated: {formatUpdatedAt(data.lastUpdated)}</div>
-            <RefreshButton />
+            <div className="text-sm text-zinc-500">
+              Last updated: {formatUpdatedAt(data.lastUpdated)}
+              {!allowManualRefresh ? " • Synced by local ingestion worker" : ""}
+            </div>
+            {allowManualRefresh ? <RefreshButton /> : null}
           </div>
         </div>
       </footer>

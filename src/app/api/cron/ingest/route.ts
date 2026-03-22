@@ -14,6 +14,13 @@ function isAuthorized(request: Request): boolean {
 }
 
 export async function GET(request: Request) {
+  if (process.env.ENABLE_SERVER_INGEST !== "true") {
+    return Response.json(
+      { error: "Server-side ingestion is disabled for this deployment. Run ingestion outside Vercel." },
+      { status: 403 },
+    );
+  }
+
   if (!isAuthorized(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
