@@ -1,15 +1,10 @@
 import { NewsDashboard } from "@/components/news-dashboard";
-import { runIngestionJob } from "@/lib/news/ingest";
-import { getDashboardData, hasNewsItems } from "@/lib/news/repository";
+import { getDashboardData } from "@/lib/news/repository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  if (!(await hasNewsItems())) {
-    await runIngestionJob();
-  }
-
   const data = await getDashboardData();
   return <NewsDashboard data={data} />;
 }

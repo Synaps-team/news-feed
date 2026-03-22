@@ -114,7 +114,7 @@ export function NewsDashboard({ data }: { data: DashboardData }) {
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-fuchsia-200 bg-fuchsia-50/60 p-8 text-sm text-zinc-500">
-              No items match this section yet. Use the refresh button after configuring more sources or API keys.
+              No items yet. Use the refresh button below, or wait for the scheduled ingestion run to populate the feed.
             </div>
           )}
         </section>
