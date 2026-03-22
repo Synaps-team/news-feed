@@ -1,0 +1,213 @@
+[
+  {
+    "id": "google-ai-blog",
+    "name": "Google AI Blog",
+    "type": "rss",
+    "url": "https://blog.google/technology/ai/rss/",
+    "enabled": true,
+    "trustWeight": 0.95,
+    "categories": ["AI"]
+  },
+  {
+    "id": "openai-news",
+    "name": "OpenAI News",
+    "type": "rss",
+    "url": "https://openai.com/news/rss.xml",
+    "enabled": true,
+    "trustWeight": 0.95,
+    "categories": ["AI"]
+  },
+  {
+    "id": "meta-ai-blog",
+    "name": "Meta AI Blog",
+    "type": "rss",
+    "url": "https://ai.facebook.com/blog/rss/",
+    "enabled": true,
+    "trustWeight": 0.93,
+    "categories": ["AI"]
+  },
+  {
+    "id": "nvidia-blog",
+    "name": "NVIDIA Developer Blog",
+    "type": "rss",
+    "url": "https://developer.nvidia.com/blog/feed/",
+    "enabled": true,
+    "trustWeight": 0.92,
+    "categories": ["AI"]
+  },
+  {
+    "id": "microsoft-ai-blog",
+    "name": "Microsoft AI Blog",
+    "type": "rss",
+    "url": "https://blogs.microsoft.com/ai/feed/",
+    "enabled": true,
+    "trustWeight": 0.93,
+    "categories": ["AI"]
+  },
+  {
+    "id": "archdaily",
+    "name": "ArchDaily",
+    "type": "rss",
+    "url": "https://www.archdaily.com/rss",
+    "enabled": true,
+    "trustWeight": 0.88,
+    "categories": ["Digital Architecture Tools", "AI in Architecture"]
+  },
+  {
+    "id": "aec-magazine",
+    "name": "AEC Magazine",
+    "type": "rss",
+    "url": "https://aecmag.com/feed/",
+    "enabled": true,
+    "trustWeight": 0.85,
+    "categories": ["Digital Architecture Tools"]
+  },
+  {
+    "id": "autodesk-blog",
+    "name": "Autodesk Blog",
+    "type": "rss",
+    "url": "https://www.autodesk.com/blogs/feed/",
+    "enabled": true,
+    "trustWeight": 0.9,
+    "categories": ["Digital Architecture Tools", "AI in Architecture"]
+  },
+  {
+    "id": "techcrunch-ai",
+    "name": "TechCrunch AI",
+    "type": "rss",
+    "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+    "enabled": true,
+    "trustWeight": 0.85,
+    "categories": ["AI"]
+  },
+  {
+    "id": "venturebeat-ai",
+    "name": "VentureBeat AI",
+    "type": "rss",
+    "url": "https://venturebeat.com/category/ai/feed/",
+    "enabled": true,
+    "trustWeight": 0.84,
+    "categories": ["AI"]
+  },
+  {
+    "id": "theverge-ai",
+    "name": "The Verge AI",
+    "type": "rss",
+    "url": "https://www.theverge.com/artificial-intelligence/rss/index.xml",
+    "enabled": true,
+    "trustWeight": 0.82,
+    "categories": ["AI"]
+  },
+  {
+    "id": "arxiv-ai",
+    "name": "arXiv AI",
+    "type": "arxiv",
+    "enabled": true,
+    "trustWeight": 0.9,
+    "options": {
+      "query": "cat:cs.AI OR cat:cs.CV OR cat:cs.LG",
+      "max_results": 25,
+      "sortBy": "submittedDate"
+    },
+    "categories": ["AI"]
+  },
+  {
+    "id": "arxiv-architecture-ai",
+    "name": "arXiv Architecture AI",
+    "type": "arxiv",
+    "enabled": true,
+    "trustWeight": 0.88,
+    "options": {
+      "query": "(architecture OR floorplan OR building) AND (AI OR deep learning OR generative)",
+      "max_results": 15,
+      "sortBy": "submittedDate"
+    },
+    "categories": ["AI in Architecture"]
+  },
+  {
+    "id": "github-trending-ai",
+    "name": "GitHub Trending AI",
+    "type": "github",
+    "enabled": true,
+    "trustWeight": 0.85,
+    "options": {
+      "query": "artificial intelligence OR machine learning",
+      "since": "daily"
+    },
+    "categories": ["AI"]
+  },
+  {
+    "id": "github-architecture-tools",
+    "name": "GitHub AEC Tools",
+    "type": "github",
+    "enabled": true,
+    "trustWeight": 0.83,
+    "options": {
+      "query": "BIM OR CAD OR floorplan OR architecture",
+      "since": "daily"
+    },
+    "categories": ["Digital Architecture Tools", "AI in Architecture"]
+  },
+  {
+    "id": "hacker-news-ai",
+    "name": "Hacker News AI",
+    "type": "hacker_news_algolia",
+    "enabled": true,
+    "trustWeight": 0.9,
+    "options": {
+      "query": "\"AI\" OR \"LLM\" OR \"machine learning\" OR \"computer vision\" OR \"agent\"",
+      "tags": "story",
+      "hitsPerPage": 20,
+      "sortBy": "date"
+    },
+    "categories": ["AI"]
+  },
+  {
+    "id": "hacker-news-architecture-tools",
+    "name": "Hacker News AEC / Tools",
+    "type": "hacker_news_algolia",
+    "enabled": true,
+    "trustWeight": 0.86,
+    "options": {
+      "query": "\"BIM\" OR \"CAD\" OR \"Revit\" OR \"Rhino\" OR \"Grasshopper\" OR \"AEC\" OR \"floorplan\"",
+      "tags": "story",
+      "hitsPerPage": 20,
+      "sortBy": "date"
+    },
+    "categories": ["Digital Architecture Tools", "AI in Architecture"]
+  },
+  {
+    "id": "product-hunt-ai-tools",
+    "name": "Product Hunt AI Tools",
+    "type": "product_hunt",
+    "enabled": true,
+    "trustWeight": 0.78,
+    "options": {
+      "query": "AI OR architecture OR CAD OR BIM OR design tools",
+      "limit": 20,
+      "sortBy": "newest",
+      "requiresAuth": true,
+      "apiType": "graphql"
+    },
+    "categories": ["AI", "Digital Architecture Tools", "AI in Architecture"]
+  },
+  {
+    "id": "news-api-ai-architecture",
+    "name": "News API",
+    "type": "news_api",
+    "enabled": true,
+    "trustWeight": 0.72,
+    "options": {
+      "query": "\"AI\" AND (architecture OR BIM OR CAD OR AEC)"
+    }
+  },
+  {
+    "id": "x-aec-ai",
+    "name": "X",
+    "type": "x",
+    "enabled": true,
+    "options": {
+      "query": "(AI OR BIM OR Revit OR Grasshopper OR generative design) -is:retweet lang:en"
+    }
+  }
+]

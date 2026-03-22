@@ -6,13 +6,13 @@ A minimal Next.js MVP that aggregates and displays the latest news about:
 - Digital architecture tools
 - AI in architecture
 
-The app ingests multiple source types, normalizes them into one format, classifies and ranks them, removes duplicates, stores them in a local database, and renders a simple dashboard UI.
+The app ingests multiple source types, normalizes them into one format, classifies and ranks them, removes duplicates, stores them in a database, and renders a simple dashboard UI.
 
 ## Stack
 
 - Frontend: Next.js App Router
 - Backend: Next.js route handlers
-- Database: SQLite via `better-sqlite3`
+- Database: SQLite locally, Supabase/Postgres on Vercel
 - Scheduling: local cron or Vercel cron
 - Optional AI enrichment: OpenAI
 
@@ -101,11 +101,40 @@ On first load, the app will attempt a live ingest from the enabled RSS sources a
 
 By default the app writes to `data/latest-news.db`. If the database is empty, the app tries a live ingest from the enabled sources. Use `npm run seed` only if you want mock data for offline UI testing.
 
+## Database Modes
+
+The app supports two database providers:
+
+- `sqlite`: default for local development
+- `postgres`: recommended for Vercel and Supabase
+
+### Local development
+
+Use:
+
+```env
+DATABASE_PROVIDER=sqlite
+DATABASE_PATH=./data/latest-news.db
+```
+
+### Vercel + Supabase
+
+Use:
+
+```env
+DATABASE_PROVIDER=postgres
+POSTGRES_URL=postgresql://...
+```
+
+You can get the `POSTGRES_URL` value from your Supabase project connection settings. Use the pooled connection string for Vercel.
+
 ## Environment Variables
 
 See `.env.example`.
 
 - `DATABASE_PATH`: SQLite database file path
+- `DATABASE_PROVIDER`: `sqlite` or `postgres`
+- `POSTGRES_URL`: Supabase/Postgres connection string for production
 - `OPENAI_API_KEY`: optional summary/classification enrichment
 - `OPENAI_MODEL`: optional AI model override
 - `NEWS_API_KEY`: optional News API adapter
@@ -175,6 +204,29 @@ If `CRON_SECRET` is set, send it as:
 Authorization: Bearer <secret>
 ```
 
+## Deploy To Vercel
+
+1. Push the project to GitHub.
+2. In Supabase, open the SQL editor and run `sql/schema.sql`.
+3. In Vercel, import the GitHub repo as a new project.
+4. Add these environment variables in Vercel:
+
+- `DATABASE_PROVIDER=postgres`
+- `POSTGRES_URL=<your supabase pooled connection string>`
+- `OPENAI_API_KEY`
+- `NEWS_API_KEY`
+- `X_BEARER_TOKEN`
+- `CRON_SECRET`
+- optionally `OPENAI_MODEL`
+
+5. Deploy.
+
+After deployment:
+
+- the app will use Supabase/Postgres instead of the local SQLite file
+- `/api/cron/ingest` will be called automatically by Vercel cron
+- the `Refresh` button will trigger a live ingest against the production database
+
 ## Notes
 
 - The X adapter expects official API access and will stay inactive without a bearer token.
@@ -183,7 +235,6 @@ Authorization: Bearer <secret>
 
 ## Next Extensions
 
-- Swap SQLite for Supabase/Postgres through the repository layer
 - Add per-source health tracking and retry behavior
 - Add source management UI
 - Add embeddings-based semantic dedupe and clustering
