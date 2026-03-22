@@ -1,3 +1,4 @@
+import { closeDatabaseConnections } from "@/lib/db";
 import { runIngestionJob } from "@/lib/news/ingest";
 
 export const runtime = "nodejs";
@@ -25,6 +26,10 @@ export async function GET(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const result = await runIngestionJob();
-  return Response.json(result);
+  try {
+    const result = await runIngestionJob();
+    return Response.json(result);
+  } finally {
+    await closeDatabaseConnections();
+  }
 }

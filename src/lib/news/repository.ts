@@ -367,7 +367,22 @@ export async function saveJobRun(result: IngestionResult) {
   );
 }
 
-async function getDashboardRows(category: NewsCategory): Promise<DashboardNewsItem[]> {
+function mapDashboardRows(rows: NewsItemRow[]): DashboardNewsItem[] {
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    summary: row.summary,
+    url: row.url,
+    sourceName: row.source_name,
+    sourceType: row.source_type,
+    publishedAt: row.published_at,
+    tags: fromJson<string[]>(row.tags_json, []),
+    categories: fromJson<NewsCategory[]>(row.categories_json, []),
+    overallScore: row.overall_score,
+  }));
+}
+
+async function getCanonicalRows(): Promise<DashboardNewsItem[]> {
   await ensureDatabaseReady();
 
   let rows: NewsItemRow[] = [];
@@ -401,32 +416,17 @@ async function getDashboardRows(category: NewsCategory): Promise<DashboardNewsIt
     rows = result as unknown as NewsItemRow[];
   }
 
-  return rows
-    .map((row) => ({
-      id: row.id,
-      title: row.title,
-      summary: row.summary,
-      url: row.url,
-      sourceName: row.source_name,
-      sourceType: row.source_type,
-      publishedAt: row.published_at,
-      tags: fromJson<string[]>(row.tags_json, []),
-      categories: fromJson<NewsCategory[]>(row.categories_json, []),
-      overallScore: row.overall_score,
-    }))
-    .filter((row) => row.categories.includes(category))
-    .slice(0, 12);
+  return mapDashboardRows(rows);
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
   await ensureDatabaseReady();
 
-  const sections: DashboardSection[] = await Promise.all(
-    NEWS_CATEGORIES.map(async (category) => ({
-      category,
-      items: await getDashboardRows(category),
-    })),
-  );
+  const canonicalRows = await getCanonicalRows();
+  const sections: DashboardSection[] = NEWS_CATEGORIES.map((category) => ({
+    category,
+    items: canonicalRows.filter((row) => row.categories.includes(category)).slice(0, 12),
+  }));
 
   let totalItems = 0;
   let sourceCount = 0;
@@ -449,13 +449,17 @@ export async function getDashboardData(): Promise<DashboardData> {
     lastUpdated = updatedRow.fetched_at;
   } else {
     const sql = getPostgresDb();
-    const countRows = await sql.unsafe("SELECT COUNT(*) AS count FROM news_items WHERE is_canonical = 1");
-    const sourceRows = await sql.unsafe("SELECT COUNT(DISTINCT source_id) AS count FROM news_items");
-    const updatedRows = await sql.unsafe("SELECT MAX(fetched_at) AS fetched_at FROM news_items");
+    const statsRows = await sql.unsafe(`
+      SELECT
+        COUNT(*) FILTER (WHERE is_canonical = 1) AS total_items,
+        COUNT(DISTINCT source_id) AS source_count,
+        MAX(fetched_at) AS fetched_at
+      FROM news_items
+    `);
 
-    totalItems = toCount(countRows[0]?.count ?? 0);
-    sourceCount = toCount(sourceRows[0]?.count ?? 0);
-    lastUpdated = (updatedRows[0]?.fetched_at as string | null | undefined) ?? null;
+    totalItems = toCount(statsRows[0]?.total_items ?? 0);
+    sourceCount = toCount(statsRows[0]?.source_count ?? 0);
+    lastUpdated = (statsRows[0]?.fetched_at as string | null | undefined) ?? null;
   }
 
   return {

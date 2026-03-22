@@ -140,24 +140,48 @@ export function getPostgresDb() {
     global.__latestNewsPg__ = postgres(connectionString, {
       prepare: false,
       max: 1,
+      idle_timeout: 1,
+      connect_timeout: 5,
+      onnotice: (notice) => {
+        console.log("[db:notice]", notice.code, notice.message);
+      },
     });
+
+    console.log("[db] Initialized Postgres client");
   }
 
   return global.__latestNewsPg__;
 }
 
 export async function ensureDatabaseReady(): Promise<void> {
+  const startedAt = Date.now();
+  const provider = getDatabaseProvider();
+  console.log(`[db] ensureDatabaseReady start provider=${provider}`);
+
   if (getDatabaseProvider() === "sqlite") {
     getSqliteDb();
+    console.log(`[db] ensureDatabaseReady done provider=sqlite elapsed_ms=${Date.now() - startedAt}`);
     return;
   }
 
   if (!global.__latestNewsPgReady__) {
     global.__latestNewsPgReady__ = (async () => {
       const sql = getPostgresDb();
+      console.log("[db] Running schema sync for postgres");
       await sql.unsafe(DB_SCHEMA);
+      console.log("[db] Schema sync complete for postgres");
     })();
   }
 
   await global.__latestNewsPgReady__;
+  console.log(`[db] ensureDatabaseReady done provider=postgres elapsed_ms=${Date.now() - startedAt}`);
+}
+
+export async function closeDatabaseConnections(): Promise<void> {
+  if (global.__latestNewsPg__) {
+    await global.__latestNewsPg__.end({ timeout: 1 });
+    global.__latestNewsPg__ = undefined;
+    global.__latestNewsPgReady__ = undefined;
+    console.log("[db] Closed Postgres client");
+  }
 }

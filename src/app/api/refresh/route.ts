@@ -1,3 +1,4 @@
+import { closeDatabaseConnections } from "@/lib/db";
 import { getDashboardData } from "@/lib/news/repository";
 import { runIngestionJob } from "@/lib/news/ingest";
 
@@ -11,11 +12,15 @@ export async function POST() {
     );
   }
 
-  const result = await runIngestionJob();
-  const data = await getDashboardData();
+  try {
+    const result = await runIngestionJob();
+    const data = await getDashboardData();
 
-  return Response.json({
-    result,
-    data,
-  });
+    return Response.json({
+      result,
+      data,
+    });
+  } finally {
+    await closeDatabaseConnections();
+  }
 }
