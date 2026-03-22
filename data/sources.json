@@ -102,7 +102,7 @@
     "id": "arxiv-ai",
     "name": "arXiv AI",
     "type": "arxiv",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.9,
     "options": {
       "query": "cat:cs.AI OR cat:cs.CV OR cat:cs.LG",
@@ -115,7 +115,7 @@
     "id": "arxiv-architecture-ai",
     "name": "arXiv Architecture AI",
     "type": "arxiv",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.88,
     "options": {
       "query": "(architecture OR floorplan OR building) AND (AI OR deep learning OR generative)",
@@ -128,7 +128,7 @@
     "id": "github-trending-ai",
     "name": "GitHub Trending AI",
     "type": "github",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.85,
     "options": {
       "query": "artificial intelligence OR machine learning",
@@ -140,7 +140,7 @@
     "id": "github-architecture-tools",
     "name": "GitHub AEC Tools",
     "type": "github",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.83,
     "options": {
       "query": "BIM OR CAD OR floorplan OR architecture",
@@ -166,7 +166,7 @@
     "id": "hacker-news-architecture-tools",
     "name": "Hacker News AEC / Tools",
     "type": "hacker_news_algolia",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.86,
     "options": {
       "query": "\"BIM\" OR \"CAD\" OR \"Revit\" OR \"Rhino\" OR \"Grasshopper\" OR \"AEC\" OR \"floorplan\"",
@@ -180,7 +180,7 @@
     "id": "product-hunt-ai-tools",
     "name": "Product Hunt AI Tools",
     "type": "product_hunt",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.78,
     "options": {
       "query": "AI OR architecture OR CAD OR BIM OR design tools",
@@ -195,7 +195,7 @@
     "id": "news-api-ai-architecture",
     "name": "News API",
     "type": "news_api",
-    "enabled": true,
+    "enabled": false,
     "trustWeight": 0.72,
     "options": {
       "query": "\"AI\" AND (architecture OR BIM OR CAD OR AEC)"
@@ -205,7 +205,7 @@
     "id": "x-aec-ai",
     "name": "X",
     "type": "x",
-    "enabled": true,
+    "enabled": false,
     "options": {
       "query": "(AI OR BIM OR Revit OR Grasshopper OR generative design) -is:retweet lang:en"
     }
